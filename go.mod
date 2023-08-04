@@ -1,4 +1,4 @@
-module cdp-helper
+module github.com/3927o/cdp-helper
 
 go 1.20
 
