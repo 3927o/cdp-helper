@@ -16,7 +16,6 @@ import (
 )
 
 var DefaultExecAllocatorOptions = map[string]interface{}{
-	"disable-blink-features":                 "AutomationControlled", // 禁止自动化控制检测
 	"force-color-profile":                    "srgb",
 	"safebrowsing-disable-auto-update":       true,
 	"no-first-run":                           true,
@@ -57,7 +56,7 @@ var DefaultPCDevice chromedp.Device = device.Info{
 	Touch:     false,
 }
 
-// CreateBrowserLocalRemote
+// CreateRemoteBrowserWithContext
 func CreateRemoteBrowserWithContext(parent context.Context, remote string, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc) {
 	remoteUrl := constructRemoteUrl(remote, options)
 
@@ -74,19 +73,18 @@ func CreateRemoteBrowserWithContext(parent context.Context, remote string, steal
 	return ctx, cancel
 }
 
-// CreateBrowserLocalRemote create a local browser
+// CreateRemoteBrowser create a local browser
 // not return cancel func because you can close it in a more elegant way: chromedp.Cancel()
 func CreateRemoteBrowser(remote string, options map[string]interface{}) context.Context {
 	ctx, _ := CreateRemoteBrowserWithContext(context.Background(), remote, true, options)
 	return ctx
 }
 
-func CreateBrowserWithContest(parent context.Context, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc) {
+func CreateBrowserWithContext(parent context.Context, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc) {
 	execAllocatorOptions := convertExecAllocatorOption(options)
 
 	if stealth {
 		execAllocatorOptions = append(execAllocatorOptions,
-			chromedp.Flag("enable-automation", false),
 			chromedp.Flag("disable-blink-features", "AutomationControlled"),
 		)
 	}
@@ -101,7 +99,7 @@ func CreateBrowserWithContest(parent context.Context, stealth bool, options map[
 // CreateBrowser create a local browser
 // not return cancel func because you can close it in a more elegant way: chromedp.Cancel()
 func CreateBrowser(options map[string]interface{}) context.Context {
-	ctx, _ := CreateBrowserWithContest(context.Background(), true, options)
+	ctx, _ := CreateBrowserWithContext(context.Background(), true, options)
 	return ctx
 }
 
@@ -126,7 +124,7 @@ func CaptureScreenshot(ctx context.Context, filename string) error {
 	}
 	c := chromedp.FromContext(ctx)
 	if c.Target == nil {
-		return errors.New("given context is not a valid chromedp context")
+		return errors.New("given context is a invalid chromedp context")
 	}
 	screenBytes, err := page.CaptureScreenshot().Do(cdp.WithExecutor(ctx, c.Target))
 	if err != nil {
