@@ -26,10 +26,10 @@ func CreateRemoteBrowser(remote string, options map[string]interface{}) context.
 func CreateBrowserWithContext(parent context.Context, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc)
 
 // CreateRemoteBrowser create a local browser
-func CreateRemoteBrowser(remote string, options map[string]interface{}) context.Context
+func CreateBrowser(remote string, options map[string]interface{}) context.Context
 
 // CreateRemoteBrowserWithContext create a local browser with context
-func CreateRemoteBrowserWithContext(parent context.Context, remote string, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc)
+func CreateBrowserWithContext(parent context.Context, remote string, stealth bool, options map[string]interface{}) (context.Context, context.CancelFunc)
 
 func SetCookies(ctx context.Context, cookies []*network.CookieParam) error
 
